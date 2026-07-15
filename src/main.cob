@@ -138,6 +138,8 @@
                    PERFORM RUN-DUMP
                WHEN "DEMO"
                    PERFORM RUN-DEMO
+               WHEN "KEYTEST"
+                   PERFORM RUN-KEYTEST
                WHEN OTHER
                    PERFORM GAME-MAIN
            END-EVALUATE
@@ -158,6 +160,11 @@
            INSPECT WS-CMDLINE TALLYING WS-N FOR ALL "demo"
            IF WS-N > 0
               MOVE "DEMO" TO RUN-MODE
+           END-IF
+           MOVE 0 TO WS-N
+           INSPECT WS-CMDLINE TALLYING WS-N FOR ALL "keytest"
+           IF WS-N > 0
+              MOVE "KEYTEST" TO RUN-MODE
            END-IF
            MOVE 0 TO WS-N
            INSPECT WS-CMDLINE TALLYING WS-N FOR ALL "dump"
@@ -296,7 +303,7 @@
            MOVE X"00" TO IN-KEY
            MOVE 0 TO KEY-STATUS
            ACCEPT IN-KEY AT LINE MSG-LINE COLUMN 1
-               WITH TIMEOUT FRAME-TIMEOUT NO ECHO
+               WITH AUTO TIMEOUT FRAME-TIMEOUT NO ECHO
                ON EXCEPTION CONTINUE
            END-ACCEPT
       *>   Arrow / ESC keys arrive as a CRT STATUS code (no character).
@@ -995,6 +1002,43 @@
                WHEN OTHER
                     MOVE CLR-WHITE TO WS-FG
            END-EVALUATE.
+
+      *>   Diagnostic: show what the terminal reports for each key press.
+      *>   Run with:  ./super-cobol-bros --keytest   (press Q to quit)
+       RUN-KEYTEST.
+           DISPLAY " " AT LINE 1 COLUMN 1 WITH BLANK SCREEN
+           DISPLAY "SUPER COBOL BROS. -- key test"
+              AT LINE 2 COLUMN 5 WITH FOREGROUND-COLOR CLR-WHITE HIGHLIGHT
+           DISPLAY "Press keys to see what your terminal sends."
+              AT LINE 4 COLUMN 5
+           DISPLAY "Movement should show a char; arrows show a status."
+              AT LINE 5 COLUMN 5
+           DISPLAY "Press Q to quit."
+              AT LINE 6 COLUMN 5
+           MOVE "N" TO WS-DONE
+           PERFORM UNTIL WS-DONE = "Y"
+              MOVE X"00" TO IN-KEY
+              MOVE 0 TO KEY-STATUS
+              ACCEPT IN-KEY AT LINE MSG-LINE COLUMN 1
+                 WITH AUTO TIMEOUT FRAME-TIMEOUT NO ECHO
+                 ON EXCEPTION CONTINUE
+              END-ACCEPT
+              IF KEY-STATUS NOT = K-TIMEOUT OR IN-KEY NOT = X"00"
+                 MOVE FUNCTION ORD(IN-KEY) TO WS-N
+                 MOVE SPACES TO SCREEN-LINE
+                 STRING "last key -> CRT-STATUS=" KEY-STATUS
+                        "  char-ord=" WS-N
+                        "  char=[" IN-KEY "]   "
+                    DELIMITED BY SIZE INTO SCREEN-LINE
+                 END-STRING
+                 DISPLAY SCREEN-LINE AT LINE 9 COLUMN 5
+                    WITH FOREGROUND-COLOR CLR-YELLOW
+                 IF FUNCTION LOWER-CASE(IN-KEY) = "q"
+                    MOVE "Y" TO WS-DONE
+                 END-IF
+              END-IF
+           END-PERFORM
+           PERFORM RESTORE-TERMINAL.
 
        RENDER-HUD-TEXT.
            MOVE SCORE TO ED-SCORE
