@@ -1,0 +1,19 @@
+# fixture: WIDTH exceeds the maximum -> loader must reject
+NAME bad-width
+WIDTH 9999
+TIME 300
+GRID
+
+
+
+
+                    P
+
+
+
+
+                                        F
+
+
+==========================
+==========================

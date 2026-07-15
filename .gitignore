@@ -1,12 +1,22 @@
-# Dependencies
-node_modules/
+# Compiled game binary + build artifacts
+/super-cobol-bros
+/scb-dbg
+*.o
+*.so
 
-# Env
-.env
-.env.local
+# Python cache (level-authoring tool)
+__pycache__/
+*.pyc
 
 # OS
 .DS_Store
 
 # Logs
 *.log
+
+# cobc translation artifacts (from -g/-debug builds)
+main.c
+main.c.h
+main.c.l.h
+main.i
+*.i

@@ -1,0 +1,27 @@
+# fixture: no player spawn -> loader must reject
+NAME no-spawn
+WIDTH 30
+TIME 300
+GRID
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    F
+==============================
+==============================

@@ -1,0 +1,15 @@
+# fixture: fewer than 22 grid rows -> loader must reject
+NAME short-grid
+WIDTH 30
+TIME 300
+GRID
+
+
+
+
+
+
+
+
+
+
